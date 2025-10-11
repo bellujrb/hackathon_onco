@@ -1,0 +1,1 @@
+"an", "ah", "al", "ul", "am" sind zu kurz; trotzdem gelabelt wie vorliegen.

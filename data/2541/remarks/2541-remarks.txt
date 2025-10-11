@@ -1,0 +1,5 @@
+il wurde zusätzlich auch als in gelabelt
+al wurde zusätzlich auch als an gelabelt
+
+Das EGG-Signal rauscht sehr stark. Datei wurde aber trotzdem vollständig gelabelt da NSP völlig in Ordnung.
+
