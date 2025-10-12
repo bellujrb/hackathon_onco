@@ -8,8 +8,8 @@
 
 Sistema de detecção precoce de câncer de laringe através de análise vocal com inteligência artificial. Baseado em pesquisas científicas publicadas na revista *Frontiers in Digital Health* (2025).
 
-Frontend Hospedado: https://hackathon-onco.vercel.app
-Backend Hospedado: https://hackathon-onco.onrender.com
+- **Frontend Hospedado:** https://hackathon-onco.vercel.app
+- **Backend Hospedado:** https://hackathon-onco.onrender.com
 
 ## 🎯 Sobre o Projeto
 
