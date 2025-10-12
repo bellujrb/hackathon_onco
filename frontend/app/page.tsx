@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Mic, Square, Play, Activity, AlertCircle, CheckCircle, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://hackathon-onco.onrender.com"
 
 interface RiskAssessment {
   risk_level: string
