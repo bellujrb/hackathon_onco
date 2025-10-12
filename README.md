@@ -16,7 +16,7 @@ Este projeto foi desenvolvido durante um hackathon e utiliza técnicas de Machin
 
 O modelo é baseado no paper:
 - **"Diagnostic Acoustics Distinguish Vocal Fold Lesions"** (Frontiers in Digital Health, 2025)
-- **Dataset:** Saarbrücken Voice Database (SVD) - 140 amostras
+- **Dataset:** Bridge2AI-Voice - 12.523 amostras | Saarbrücken Voice Database (SVD) - 140 amostras
 
 ## ✨ Funcionalidades
 
