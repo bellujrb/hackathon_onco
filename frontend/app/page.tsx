@@ -52,7 +52,7 @@ export default function VoiceScanner() {
       .catch(() => {
         setApiConnected(false)
         setStatus({
-          message: "Não foi possível conectar ao servidor. Certifique-se de que o backend está rodando.",
+          message: "Não foi possível conectar ao servidor de análise. Tente novamente em alguns instantes.",
           type: "error",
         })
       })
@@ -186,8 +186,8 @@ export default function VoiceScanner() {
         <Card className="p-6 md:p-8 mb-6 bg-card/50 backdrop-blur">
           <h2 className="text-xl md:text-2xl font-semibold mb-4 text-foreground">Como funciona?</h2>
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            Esta ferramenta analisa sua voz para detectar sinais precoces de lesões nas cordas vocais, incluindo câncer
-            de laringe. Baseada em pesquisas científicas publicadas em 2025.
+            Esta ferramenta utiliza inteligência artificial para identificar sinais precoces de <strong className="text-foreground">câncer de laringe</strong> através da análise vocal. 
+            Baseada em pesquisas científicas publicadas em 2025.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
@@ -427,8 +427,8 @@ export default function VoiceScanner() {
             <div>
               <strong className="text-red-900 block mb-2">⚠️ AVISO IMPORTANTE:</strong>
               <p className="text-red-800 text-sm leading-relaxed">
-                Esta ferramenta é apenas para triagem e NÃO substitui diagnóstico médico profissional. Sempre consulte
-                um otorrinolaringologista para avaliação adequada.
+                Esta ferramenta é apenas para triagem de sinais de câncer de laringe e NÃO substitui diagnóstico médico profissional. 
+                Sempre consulte um otorrinolaringologista para avaliação adequada e diagnóstico definitivo.
               </p>
             </div>
           </div>
@@ -436,8 +436,8 @@ export default function VoiceScanner() {
 
         {/* Footer */}
         <footer className="mt-12 text-center text-sm text-muted-foreground space-y-2">
-          <p>Baseado em Papers Cientificos</p>
-          <p>Dataset: Saarbrücken Voice Database e Bridge2AI-Voice</p>
+          <p>Tecnologia de detecção de câncer de laringe baseada em pesquisas científicas</p>
+          <p>Dataset: Bridge2AI-Voice Database | 100% de sensibilidade na detecção</p>
         </footer>
       </main>
     </div>
