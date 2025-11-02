@@ -1,188 +1,132 @@
-# 🎤 Scanner de Câncer de Laringe
+# 🎤 Voice Check - Sistema de Rastreamento de Câncer de Laringe
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-green.svg)
-![React](https://img.shields.io/badge/react-19.1.0-blue.svg)
-![Next.js](https://img.shields.io/badge/next.js-15.5.4-black.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+Sistema completo de análise de voz via WhatsApp para rastreamento de câncer de laringe usando IA.
 
-Sistema de detecção precoce de câncer de laringe através de análise vocal com inteligência artificial. Baseado em pesquisas científicas publicadas na revista *Frontiers in Digital Health* (2025).
-
-## 🎯 Sobre o Projeto
-
-Este projeto foi desenvolvido durante um hackathon e utiliza técnicas de Machine Learning para analisar características acústicas da voz humana e identificar possíveis sinais de lesões nas cordas vocais, incluindo câncer de laringe.
-
-### 🔬 Embasamento Científico
-
-O modelo é baseado no paper:
-- **"Diagnostic Acoustics Distinguish Vocal Fold Lesions"** (Frontiers in Digital Health, 2025)
-- **Dataset:** Saarbrücken Voice Database (SVD) - 140 amostras
-
-## ✨ Funcionalidades
-
-- 🎙️ **Gravação de Voz:** Interface intuitiva para captura de áudio
-- 🤖 **Análise por IA:** Processamento em tempo real com modelo especializado
-- 📈 **Métricas Acústicas:** Análise de F0, Jitter, Shimmer e HNR
-- 🎨 **Interface Moderna:** Design responsivo com Tailwind CSS e Radix UI
-- ⚡ **Resultados Instantâneos:** Feedback imediato com visualizações claras
-
-## 🏗️ Arquitetura
+## 📦 Arquitetura
 
 ```
-hackathon_onco/
-├── backend/                    # API Flask (Python)
-│   ├── app.py                 # Servidor principal
-│   ├── features/              # Módulos de extração de features
-│   │   ├── __init__.py
-│   │   └── acoustic_features_ml.py
-│   ├── train_laryngeal_cancer_model.py
-│   └── requirements.txt
-├── frontend/                   # Aplicação Next.js
-│   ├── app/                   # Páginas e layouts
-│   │   ├── page.tsx          # Página principal
-│   │   └── layout.tsx
-│   ├── components/            # Componentes React
-│   │   └── ui/               # Componentes UI (shadcn/ui)
-│   └── package.json
-├── data/                      # Dataset de áudio
-│   ├── *.wav                 # Arquivos de áudio
-│   ├── *.egg                 # Dados EGG
-│   └── *.nsp                 # Dados nasométricos
-└── models/                    # Modelos treinados (gerados)
-    ├── laryngeal_cancer_classifier.pkl
-    └── svd_classifier.pkl
+voice-check-oncologia/
+├── frontend/          # Next.js + Tailwind CSS
+├── model/             # FastAPI + Python ML
+└── whatsapp-ia/       # NestJS + WhatsApp + Gemini AI
 ```
 
-## 🚀 Tecnologias
+## 🚀 Fluxo Completo (100% Automático)
 
-### Backend
-- **Flask** - Framework web
-- **Flask-CORS** - Habilitar CORS
-- **Praat-Parselmouth** - Análise acústica
-- **NumPy & SciPy** - Processamento numérico
-- **Librosa** - Análise de áudio
-- **Scikit-learn** - Machine Learning
-- **Pandas** - Manipulação de dados
+1. **Usuário** envia mensagem no WhatsApp (texto ou áudio)
+2. **LLM Gemini** detecta intenção automaticamente
+3. **whatsapp-ia** cria sessão e envia link: `https://app.com/teste?session=ABC123`
+4. **Usuário** abre link e grava áudio
+5. **Frontend** → **Model** analisa áudio
+6. **Frontend** envia resultado via webhook para **whatsapp-ia**
+7. **Gemini AI** explica resultado em linguagem simples
+8. **Bot** envia explicação AUTOMATICAMENTE no WhatsApp
+9. **Usuário** recebe tudo sem precisar pedir!
+
+✨ **Totalmente automático** - Zero fricção para o usuário!
+
+## 🛠️ Tecnologias
 
 ### Frontend
-- **Next.js 15** - Framework React
-- **React 19** - Biblioteca UI
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização
-- **Radix UI** - Componentes acessíveis
-- **Lucide React** - Ícones
+- ⚡ **Next.js 14** (App Router)
+- 🎨 **Tailwind CSS** 
+- 🎤 **Web Audio API**
+- 📱 **Design Responsivo**
 
-## 📋 Pré-requisitos
+### Model (Backend Python)
+- 🚀 **FastAPI**
+- 🔬 **Parselmouth** (Praat wrapper)
+- 🧠 **Scikit-learn** (ML)
+- 💾 **Redis** (Cache)
 
-- **Python** 3.8 ou superior
-- **Node.js** 18 ou superior
-- **npm** ou **yarn**
-- **ffmpeg** (opcional, para conversão de áudio)
+### WhatsApp + IA
+- 🤖 **NestJS**
+- 💬 **Baileys** (WhatsApp)
+- 🧠 **Google Gemini AI**
+- ☁️ **Vercel** (Deploy)
 
-## 🔧 Instalação
+## 📋 Iniciar Desenvolvimento
 
-### 1. Clone o repositório
-
-```bash
-git clone https://github.com/seu-usuario/hackathon_onco.git
-cd hackathon_onco
-```
-
-### 2. Configurar o Backend
+### ⚡ Opção 1: Script Automático (Recomendado)
 
 ```bash
-cd backend
-
-# Criar ambiente virtual (recomendado)
-python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-
-# Instalar dependências
-pip install -r requirements.txt
-
-# Treinar o modelo (primeira vez)
-python train_laryngeal_cancer_model.py
+cd voice-check-oncologia
+./start-dev.sh  # Inicia tudo de uma vez!
 ```
 
-### 3. Configurar o Frontend
+### 🔧 Opção 2: Manual (3 Terminais)
 
+**Terminal 1: Model (Python)**
+```bash
+cd model
+source venv/bin/activate
+uvicorn app:app --reload --port 8000
+```
+
+**Terminal 2: Frontend (Next.js)**
 ```bash
 cd frontend
-
-# Instalar dependências
-npm install
-# ou
-yarn install
+npm run dev  # http://localhost:3000
 ```
 
-## ▶️ Executando o Projeto
+**Terminal 3: WhatsApp IA (NestJS)**
+```bash
+cd whatsapp-ia
+npm run dev  # http://localhost:3001
+```
 
-### Iniciar o Backend
+### 📱 Conectar WhatsApp
+
+Escaneie o QR Code que aparece no Terminal 3!
+
+### 🛑 Parar Tudo
 
 ```bash
-cd backend
-python app.py
+./stop-dev.sh
 ```
 
-O servidor estará rodando em `http://localhost:5002`
+## 🌐 Deploy
 
-### Iniciar o Frontend
-
+### Frontend (Vercel)
 ```bash
 cd frontend
-npm run dev
-# ou
-yarn dev
+vercel --prod
 ```
 
-A aplicação estará disponível em `http://localhost:3000`
-
-## 🎯 Como Usar
-
-1. **Acesse a aplicação** no navegador
-2. **Permita o acesso ao microfone** quando solicitado
-3. **Siga as instruções na tela:**
-   - Encontre um ambiente silencioso
-   - Posicione o microfone 10-15cm da boca
-   - Respire fundo
-   - Sustente a vogal **"AAAH"** por 3-5 segundos
-   - Mantenha volume e tom constantes
-4. **Clique em "Parar"** após a gravação
-5. **Clique em "Analisar Voz"** para obter o resultado
-6. **Visualize os resultados:**
-   - Nível de risco (Baixo/Moderado/Alto)
-   - Score de risco (0-100%)
-   - Métricas acústicas detalhadas
-   - Fatores de risco identificados
-   - Recomendações
-
-## 🔬 Metodologia
-
-### Extração de Features
-
-O sistema extrai características acústicas usando a biblioteca Parselmouth (interface Python para Praat):
-
-```python
-# Exemplo de features extraídas
-- Frequência Fundamental (F0) - média e desvio padrão
-- Jitter (%) - perturbação do período vocal
-- Shimmer (%) - variação na amplitude
-- HNR (dB) - relação harmônicos-ruído
-- Duração do áudio
+### Model (Railway/Render)
+```bash
+cd model
+# Configurar em railway.app ou render.com
 ```
 
-### Classificação
+### WhatsApp IA (Vercel Serverless)
+```bash
+cd whatsapp-ia
+vercel --prod
+```
 
-- **Modelo:** SVM (Support Vector Machine)
-- **Treinamento:** Baseado em indicadores médicos da literatura
-- **Validação:** Dataset Saarbrücken Voice Database
+## 📚 Documentação
 
-## ⚠️ Aviso Importante
+- 📘 [Quick Start](./QUICK-START.md) - Início rápido
+- 🔄 [Fluxo Completo](./FLUXO-COMPLETO.md) - Detalhes técnicos
+- 🎨 [Frontend](./frontend/README.md)
+- 🔬 [Model](./model/README.md)
+- 🤖 [WhatsApp IA](./whatsapp-ia/README.md)
 
-**Esta ferramenta é APENAS para triagem e NÃO substitui diagnóstico médico profissional.**
+## 🔐 Variáveis de Ambiente
 
-- Os resultados são indicativos e não definitivos
-- Sempre consulte um **otorrinolaringologista** para avaliação adequada
-- Não tome decisões médicas baseadas exclusivamente nesta ferramenta
-- Em caso de resultado de alto risco, procure atendimento médico imediatamente
+Copie os arquivos `.env.example` em cada pasta e configure:
+
+- `GOOGLE_API_KEY` - Gemini AI
+- `MODEL_API_URL` - URL do backend Python
+- `FRONTEND_URL` - URL do frontend
+- `REDIS_URL` - URL do Redis (opcional)
+
+## 👨‍💻 Desenvolvido por
+
+João Rubens Belluzzi Neto
+
+## 📄 Licença
+
+MIT
 

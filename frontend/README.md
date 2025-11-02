@@ -1,123 +1,107 @@
-# Scanner de Câncer de Laringe - Frontend
+# 🎨 Frontend - Voice Check
 
-Frontend da aplicação de detecção precoce de câncer de laringe através de análise vocal com IA.
+Interface Next.js moderna para captura e análise de voz.
 
-## 🚀 Tecnologias
-
-- **Next.js 15** - Framework React
-- **React 19** - Biblioteca UI
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS 4** - Estilização
-- **shadcn/ui** - Componentes UI
-- **Lucide React** - Ícones
-
-## 📋 Pré-requisitos
-
-- Node.js 18+ ou superior
-- npm, yarn, pnpm ou bun
-
-## 🔧 Instalação
-
-1. Instale as dependências:
+## 🚀 Iniciar
 
 ```bash
+# Instalar dependências
 npm install
-# ou
-yarn install
-# ou
-pnpm install
-# ou
-bun install
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+
+# Iniciar servidor de desenvolvimento
+npm run dev
 ```
 
-2. Configure as variáveis de ambiente:
+Acesse: http://localhost:3000
 
-Crie um arquivo `.env.local` na raiz do projeto:
+## 📱 Páginas
+
+### `/` - Home
+Página inicial com informações sobre o sistema.
+
+### `/teste?session=ABC123` - Teste de Voz
+Página de captura de áudio com:
+- ✅ Gravação via Web Audio API
+- ✅ Upload para backend Python
+- ✅ Exibição de resultados em tempo real
+- ✅ Design responsivo e moderno
+- ✅ Feedback visual durante análise
+
+## 🎨 Tecnologias
+
+- **Next.js 14** (App Router)
+- **React 18** com TypeScript
+- **Tailwind CSS** para estilização
+- **Axios** para requisições HTTP
+- **Web Audio API** para gravação
+
+## 🔧 Configuração
+
+### Variáveis de Ambiente
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5001
+NEXT_PUBLIC_API_URL=http://localhost:8000  # URL do backend Python
 ```
 
-## 🏃 Executando o projeto
-
-### Modo de desenvolvimento
-
-```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-# ou
-bun dev
-```
-
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
-
-### Build para produção
+## 📦 Build para Produção
 
 ```bash
 npm run build
 npm start
-# ou
-yarn build
-yarn start
-# ou
-pnpm build
-pnpm start
-# ou
-bun build
-bun start
 ```
 
-## 📁 Estrutura do projeto
+## 🌐 Deploy na Vercel
 
-```
-frontend/
-├── app/                    # App Router do Next.js
-│   ├── layout.tsx         # Layout principal
-│   ├── page.tsx           # Página inicial (VoiceScanner)
-│   └── globals.css        # Estilos globais
-├── components/
-│   └── ui/                # Componentes shadcn/ui
-│       ├── button.tsx
-│       └── card.tsx
-├── lib/
-│   └── utils.ts           # Funções utilitárias
-├── package.json
-├── tsconfig.json
-├── next.config.ts
-└── README.md
+```bash
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
 ```
 
-## 🔗 Backend
+### Configurar na Vercel:
+1. Adicionar variável: `NEXT_PUBLIC_API_URL` com URL do backend em produção
+2. Deploy automático a cada push no GitHub
 
-Este frontend se conecta com o backend Flask. Certifique-se de que o backend está rodando antes de usar a aplicação.
+## 🎯 Fluxo de Uso
 
-Veja as instruções do backend em `/backend/README.md`
+1. Usuário recebe link do WhatsApp: `https://app.com/teste?session=ABC123`
+2. Abre no navegador
+3. Clica em "Iniciar Gravação"
+4. Grava áudio sustentando "aaah" por 3-5 segundos
+5. Frontend envia para backend Python
+6. Resultado é exibido instantaneamente
+7. Resultado é salvo em cache com `session_id`
+8. Usuário volta ao WhatsApp
+9. Bot busca resultado e LLM explica
 
-## 📱 Funcionalidades
+## 🎨 Componentes
 
-- 🎤 Gravação de áudio do navegador
-- 📊 Análise em tempo real de características vocais
-- 🎨 Interface responsiva e moderna
-- 📈 Visualização de resultados com métricas detalhadas
-- ⚠️ Avaliação de risco com código de cores
-- 🔄 Suporte para múltiplas análises
+### RecordButton
+- Estados: idle, recording, analyzing
+- Feedback visual com animações
+- Tratamento de erros
 
-## 🎨 Design
+### ResultDisplay  
+- Cards coloridos baseados em risco
+- Grid com métricas acústicas
+- Lista de fatores de risco
+- Recomendações claras
 
-O design foi otimizado para aplicações médicas/saúde:
-- Cores calmas e profissionais (azul)
-- Alta legibilidade
-- Interface intuitiva
-- Feedback visual claro
+## 🔒 Segurança
 
-## 📄 Licença
+- Validação de session_id
+- Timeout de sessão (24h)
+- CORS configurado
+- Sanitização de inputs
 
-Este projeto é para fins educacionais.
+## 📱 Responsividade
 
-## ⚠️ Aviso Legal
-
-Esta ferramenta é apenas para triagem e NÃO substitui diagnóstico médico profissional. Sempre consulte um otorrinolaringologista para avaliação adequada.
+- ✅ Mobile-first design
+- ✅ Tablet otimizado
+- ✅ Desktop com layout expandido
 

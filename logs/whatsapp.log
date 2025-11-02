@@ -1,0 +1,32 @@
+
+> whatsapp-ia@1.0.0 dev
+> nest start --watch
+
+[2J[3J[H[[90m1:22:28 PM[0m] Starting compilation in watch mode...
+
+[[90m1:22:29 PM[0m] Found 0 errors. Watching for file changes.
+
+(node:33907) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +4ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [33m   WARN[39m [38;5;3m[AiService] [39m[33m⚠️  GOOGLE_API_KEY não configurada[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWhatsappModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 33939  - [39m11/01/2025, 1:22:30 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +34ms[39m
+🚀 Voice Check WhatsApp IA rodando na porta 3001
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:34 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:40 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:46 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:52 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:22:59 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:07 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:13 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:20 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:25 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:31 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
+[33m[Nest] 33939  - [39m11/01/2025, 1:23:35 PM [33m   WARN[39m [38;5;3m[WhatsappService] [39m[33m⚠️  Conexão perdida. Reconectando...[39m
