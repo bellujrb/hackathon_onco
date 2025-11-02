@@ -7,8 +7,7 @@ import makeWASocket, {
   WASocket,
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
-import * as qrcodeTerminal from 'qrcode-terminal';
-import QRCode from 'qrcode';
+import * as qrcode from 'qrcode-terminal';
 
 import { SessionService } from '../session/session.service';
 import { ConversationAgent } from '../langgraph/agents/conversation.agent';
@@ -30,8 +29,6 @@ export class WhatsappService implements OnModuleDestroy {
   private readonly modelApiUrl: string;
   
   private conversationHistory = new Map<string, ConversationMessage[]>();
-  private currentQrCode: string | null = null; // Armazena QR code atual
-  private qrCodeDataUrl: string | null = null; // Armazena QR como Data URL
 
   constructor(
     private readonly configService: ConfigService,
@@ -107,33 +104,17 @@ export class WhatsappService implements OnModuleDestroy {
     );
   }
 
-  private async handleConnectionUpdate(update: any) {
+  private handleConnectionUpdate(update: any) {
     const { connection, lastDisconnect, qr } = update;
 
     if (qr) {
-      this.currentQrCode = qr;
-      
-      // Gera QR Code como Data URL para expor via HTTP
-      try {
-        this.qrCodeDataUrl = await QRCode.toDataURL(qr, {
-          width: 400,
-          margin: 2,
-        });
-        this.logger.log('✅ QR Code gerado - Acesse GET /whatsapp/qrcode para visualizar');
-      } catch (error) {
-        this.logger.error('Erro ao gerar QR Code:', error);
-      }
-      
-      // Mantém QR no terminal também (caso funcione)
-      console.log('\n📱 Escaneie o QR Code no WhatsApp ou acesse /whatsapp/qrcode:\n');
-      qrcodeTerminal.generate(qr, { small: true });
+      console.log('\n📱 Escaneie o QR Code abaixo no WhatsApp:\n');
+      qrcode.generate(qr, { small: true });
+      this.logger.log('QR Code gerado - Escaneie para conectar');
     }
 
     if (connection === 'open') {
       this.logger.log('✅ Conexão com WhatsApp estabelecida');
-      // Limpa QR code quando conectado
-      this.currentQrCode = null;
-      this.qrCodeDataUrl = null;
     }
 
     if (connection === 'close') {
@@ -263,18 +244,5 @@ export class WhatsappService implements OnModuleDestroy {
     } catch (error) {
       this.logger.error('Erro ao processar webhook:', error);
     }
-  }
-
-  // Métodos públicos para acessar QR Code
-  getQrCodeDataUrl(): string | null {
-    return this.qrCodeDataUrl;
-  }
-
-  hasQrCode(): boolean {
-    return this.qrCodeDataUrl !== null;
-  }
-
-  isConnected(): boolean {
-    return this.socket?.user !== undefined;
   }
 }
