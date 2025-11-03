@@ -1,192 +1,192 @@
-# 🤖 WhatsApp IA - Voice Check
+# 🤖 WhatsApp AI - Voice Check
 
-Bot WhatsApp inteligente com IA para triagem de câncer de laringe através de análise vocal.
+Intelligent WhatsApp AI Whatsapp with AI for laryngeal cancer screening through voice analysis.
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
-Este projeto é composto por **3 módulos** integrados:
+This project consists of **3 integrated modules**:
 
 ```
 ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
 │  whatsapp-ia │ ───► │   frontend   │ ───► │    model     │
 │   (NestJS)   │ ◄─── │   (Next.js)  │ ◄─── │   (Python)   │
 └──────────────┘      └──────────────┘      └──────────────┘
-     Bot IA          Interface Web      Análise de Voz
+    AI AI Whatsapp           Web Interface      Voice Analysis
 ```
 
-### Módulos:
+### Modules:
 
-- **whatsapp-ia** (este repo): Bot WhatsApp com conversação IA e transcrição de áudio
-- **frontend**: Interface web para gravação de áudio
-- **model**: API Python com modelo ML para análise vocal
+- **whatsapp-ia** (this repo): WhatsApp AI Whatsapp with AI conversation and audio transcription
+- **frontend**: Web interface for audio recording
+- **model**: Python API with ML model for voice analysis
 
-## 🚀 Iniciar
+## 🚀 Getting Started
 
 ```bash
-# Instalar dependências
+# Install dependencies
 npm install
 
-# Configurar variáveis de ambiente
+# Configure environment variables
 cp .env.example .env
-# Edite .env com suas credenciais
+# Edit .env with your credentials
 
-# Iniciar em desenvolvimento
+# Start in development mode
 npm run dev
 ```
 
-Na primeira execução, escaneie o QR Code no terminal com WhatsApp.
+On first run, scan the QR Code in the terminal with WhatsApp.
 
-## 🔄 Fluxo Completo
+## 🔄 Complete Flow
 
 ```
-1. Usuário → Manda mensagem no WhatsApp
-2. Bot IA → Conversa e detecta intenção de fazer teste
-3. Bot → Cria sessão e envia link do frontend
-4. Usuário → Clica no link e grava áudio "aaah"
-5. Frontend → Envia áudio para Model API (Python)
-6. Model → Analisa voz e envia resultado via webhook
-7. Bot → Recebe webhook automaticamente
-8. Bot + LangGraph AI → Gera explicação personalizada
-9. Bot → Envia resultado no WhatsApp (automático)
+1. User → Sends message on WhatsApp
+2. AI Whatsapp → Converses and detects test intent
+3. AI Whatsapp → Creates session and sends frontend link
+4. User → Clicks link and records "aaah" audio
+5. Frontend → Sends audio to Model API (Python)
+6. Model → Analyzes voice and sends result via webhook
+7. AI Whatsapp → Receives webhook automatically
+8. AI Whatsapp + LangGraph AI → Generates personalized explanation
+9. AI Whatsapp → Sends result on WhatsApp (automatic)
 ```
 
-**Novo:** O resultado volta **automaticamente** para o WhatsApp via webhook!
+**New:** Results return **automatically** to WhatsApp via webhook!
 
-## 💬 Exemplos de Uso
+## 💬 Usage Examples
 
-### Mensagem de Texto
+### Text Message
 ```
-Usuário: "Oi, quero fazer o teste"
-Bot: "Pronto! 🎤
+User: "Hi, I want to take the test"
+AI Whatsapp: "Ready! 🎤
 
-*Link do teste:* https://...
+*Test link:* https://...
 
-Clique, grave o som "aaah" por 3-5 segundos, e o resultado volta aqui!"
-```
-
-### Mensagem de Áudio
-```
-Usuário: [áudio "Oi, quero fazer o teste"]
-Bot: [transcreve automaticamente e responde como texto]
+Click, record the sound "aaah" for 3-5 seconds, and the result will come back here!"
 ```
 
-### Após completar o teste
+### Voice Message
 ```
-[Usuário grava áudio no frontend]
-[Model analisa e envia webhook]
-Bot: "Recebi seu teste! Analisando... 🔍"
-Bot: [aguarda 2s]
-Bot: "🟢 *BAIXO RISCO*
+User: [audio "Hi, I want to take the test"]
+AI Whatsapp: [automatically transcribes and responds as text]
+```
 
-Sua análise não identificou sinais de preocupação...
+### After completing the test
+```2
+[User records audio on frontend]
+[Model analyzes and sends webhook]
+AI Whatsapp: "Got your test! Analyzing... 🔍"
+AI Whatsapp: [waits 2s]
+AI Whatsapp: "🟢 *LOW RISK*
 
-📊 *Dados Analisados:*
-🎵 Frequência vocal: 180.5 Hz
-📈 Estabilidade vocal (Jitter): 0.45%
+Your analysis did not identify signs of concern...
+
+📊 *Analyzed Data:*
+🎵 Vocal frequency: 180.5 Hz
+📈 Vocal stability (Jitter): 0.45%
 ..."
 ```
 
-## 🛠️ Tecnologias
+## 🛠️ Technologies
 
-- **NestJS** - Framework Node.js modular
-- **Baileys** - WhatsApp Web API (conexão oficial)
-- **LangChain + OpenAI** - Agentes conversacionais inteligentes
-- **LangGraph** - Orquestração de múltiplos agentes IA
-- **OpenAI Whisper** - Transcrição de áudio em tempo real
-- **TypeScript** - Tipagem estática e segurança
+- **NestJS** - Modular Node.js framework
+- **Baileys** - WhatsApp Web API (official connection)
+- **LangChain + OpenAI** - Intelligent conversational agents
+- **LangGraph** - Multi-agent orchestration
+- **OpenAI Whisper** - Real-time audio transcription
+- **TypeScript** - Static typing and safety
 
-## ✨ Funcionalidades
+## ✨ Features
 
-### 🎤 Transcrição de Áudio
-- Usuário pode mandar **áudio de voz** no WhatsApp
-- Bot transcreve automaticamente usando **OpenAI Whisper**
-- Processa como se fosse mensagem de texto
-- Totalmente transparente para o usuário
+### 🎤 Audio Transcription
+- User can send **voice messages** on WhatsApp
+- AI Whatsapp automatically transcribes using **OpenAI Whisper**
+- Processes as if it were a text message
+- Completely transparent to the user
 
-### 🤖 Conversação Inteligente
-- Agentes IA conversam naturalmente
-- Detectam intenção (fazer teste, tirar dúvidas, etc)
-- Mantêm histórico de conversa
-- Explicações personalizadas dos resultados
+### 🤖 Intelligent Conversation
+- AI agents converse naturally
+- Detect intent (take test, ask questions, etc)
+- Maintain conversation history
+- Personalized result explanations
 
-### 🔗 Pipeline Automatizada
-- Link gerado automaticamente por sessão
-- Webhook retorna resultado direto no WhatsApp
-- Sem necessidade do usuário pedir resultado
+### 🔗 Automated Pipeline
+- Link automatically generated per session
+- Webhook returns result directly to WhatsApp
+- No need for user to request result
 
-## 📡 APIs e Integrações
+## 📡 APIs and Integrations
 
-### Webhook (recebe do Model)
+### Webhook (receives from Model)
 ```
 POST /api/webhook/result
 Body: { sessionId, result }
 ```
 
-### Endpoints Internos
+### Internal Endpoints
 ```typescript
-// SessionService - Gerencia sessões temporárias
+// SessionService - Manages temporary sessions
 createSession(whatsappId) → sessionId
 getSession(sessionId) → { whatsappId, createdAt }
 
-// ConversationAgent - Detecta intenção
+// ConversationAgent - Detects intent
 detectIntent(message) → 'send_test_link' | 'general_conversation'
 
-// ResultAnalysisAgent - Explica resultados
-explainResult(result) → mensagem formatada
+// ResultAnalysisAgent - Explains results
+explainResult(result) → formatted message
 
-// AudioTranscriptionService - Transcreve áudios
-transcribe(audioBuffer) → texto
+// AudioTranscriptionService - Transcribes audios
+transcribe(audioBuffer) → text
 ```
 
-## ⚙️ Configuração
+## ⚙️ Configuration
 
-### Variáveis de Ambiente
+### Environment Variables
 
 ```env
-# OpenAI (obrigatório para transcrição de áudio e conversação)
+# OpenAI (required for audio transcription and conversation)
 OPENAI_API_KEY=sk-...
 
-# URLs dos serviços
+# Service URLs
 FRONTEND_URL=https://voice-check.vercel.app
 MODEL_API_URL=https://model-api.railway.app
 
-# Porta do servidor
+# Server port
 PORT=3001
 ```
 
-## 🏗️ Estrutura do Projeto
+## 🏗️ Project Structure
 
 ```
 whatsapp-ia/
 ├── src/
-│   ├── langgraph/              # Sistema de Agentes IA
+│   ├── langgraph/              # AI Agents System
 │   │   ├── agents/
-│   │   │   ├── conversation.agent.ts    # Conversação geral
-│   │   │   ├── result-analysis.agent.ts # Análise de resultados
+│   │   │   ├── conversation.agent.ts    # General conversation
+│   │   │   ├── result-analysis.agent.ts # Results analysis
 │   │   │   └── base/
-│   │   │       └── base-agent.ts        # Agente base
+│   │   │       └── base-agent.ts        # Base agent
 │   │   ├── services/
-│   │   │   └── openai-model.service.ts  # Cliente OpenAI
+│   │   │   └── openai-model.service.ts  # OpenAI client
 │   │   ├── types/
-│   │   │   └── agent.types.ts           # Tipos TypeScript
+│   │   │   └── agent.types.ts           # TypeScript types
 │   │   └── langgraph.module.ts
 │   │
-│   ├── whatsapp/               # Bot WhatsApp
-│   │   ├── whatsapp.service.ts          # Lógica principal
+│   ├── whatsapp/               # WhatsApp AI Whatsapp
+│   │   ├── whatsapp.service.ts          # Main logic
 │   │   ├── whatsapp.controller.ts       # Webhook endpoint
 │   │   ├── audio-transcription.service.ts # Whisper API
 │   │   └── whatsapp.module.ts
 │   │
-│   ├── session/                # Gerenciamento de sessões
+│   ├── session/                # Session Management
 │   │   ├── session.service.ts
 │   │   └── session.module.ts
 │   │
-│   ├── app.module.ts           # Módulo raiz
+│   ├── app.module.ts           # Root module
 │   └── main.ts                 # Bootstrap
 │
-├── auth/                       # Credenciais WhatsApp (auto-gerado)
-├── temp/                       # Arquivos temporários de áudio
-├── dist/                       # Build compilado
+├── auth/                       # WhatsApp credentials (auto-generated)
+├── temp/                       # Temporary audio files
+├── dist/                       # Compiled build
 ├── package.json
 └── tsconfig.json
 ```
@@ -194,34 +194,34 @@ whatsapp-ia/
 ## 📦 Build
 
 ```bash
-# Compilar
+# Compile
 npm run build
 
-# Executar produção
+# Run production
 npm run start:prod
 ```
 
 ## 🚀 Deploy
 
-### Opção 1: VPS/Servidor Dedicado
+### Option 1: VPS/Dedicated Server
 
 ```bash
-# No servidor
+# On the server
 git clone <repo>
 cd whatsapp-ia
 npm install
 npm run build
 
-# Configurar .env com credenciais
+# Configure .env with credentials
 
-# Rodar com PM2
+# Run with PM2
 npm install -g pm2
 pm2 start npm --name "whatsapp-ia" -- run start:prod
 pm2 save
 pm2 startup
 ```
 
-### Opção 2: Railway
+### Option 2: Railway
 
 ```bash
 # railway.json
@@ -236,16 +236,16 @@ pm2 startup
 }
 ```
 
-## 🔐 Segurança
+## 🔐 Security
 
-- ✅ Sessões expiram em 24h
-- ✅ Validação de session_id
-- ✅ Rate limiting recomendado
-- ✅ Logs de todas as operações
+- ✅ Sessions expire in 24h
+- ✅ session_id validation
+- ✅ Rate limiting recommended
+- ✅ Logs of all operations
 
-## 🧪 Teste Local
+## 🧪 Local Testing
 
-1. **Inicie todos os serviços:**
+1. **Start all services:**
 
 ```bash
 # Terminal 1: Model (Python)
@@ -260,64 +260,64 @@ cd ../frontend
 npm install
 npm run dev
 
-# Terminal 3: WhatsApp IA
+# Terminal 3: WhatsApp AI
 cd ../whatsapp-ia
 npm install
 npm run dev
 ```
 
-2. **Escaneie QR Code**
-3. **Envie "teste" no WhatsApp**
-4. **Acesse link, grave áudio**
-5. **Digite "resultado"**
+2. **Scan QR Code**
+3. **Send "test" on WhatsApp**
+4. **Access link, record audio**
+5. **Result arrives automatically**
 
 ## 📝 Logs
 
 ```bash
-# Ver logs em tempo real
+# View logs in real-time
 pm2 logs whatsapp-ia
 
-# Logs específicos
+# Specific logs
 tail -f logs/app.log
 ```
 
 ## ⚠️ Troubleshooting
 
-### QR Code não aparece
-- Apague pasta `auth/`
-- Reinicie o servidor
+### QR Code doesn't appear
+- Delete `auth/` folder
+- Restart the server
 
-### "Sessão não encontrada"
-- Sessão expirou (24h)
-- Envie mensagem pedindo novo teste
+### "Session not found"
+- Session expired (24h)
+- Send message requesting new test
 
-### Transcrição de áudio não funciona
-- Verifique se `OPENAI_API_KEY` está no `.env`
-- Verifique se o diretório `temp/` existe
-- Reinicie o servidor após configurar
+### Audio transcription doesn't work
+- Check if `OPENAI_API_KEY` is in `.env`
+- Check if `temp/` directory exists
+- Restart server after configuring
 
-### Resultado não chega automaticamente
-- Verifique se Model API está enviando webhook corretamente
-- Verifique logs: `pm2 logs whatsapp-ia`
-- Endpoint webhook: `POST /api/webhook/result`
+### Result doesn't arrive automatically
+- Check if Model API is sending webhook correctly
+- Check logs: `pm2 logs whatsapp-ia`
+- Webhook endpoint: `POST /api/webhook/result`
 
-### Bot não responde
-- Verifique conexão WhatsApp (QR Code válido)
-- Verifique `OPENAI_API_KEY` configurada
-- Verifique logs de erro no console
+### AI Whatsapp doesn't respond
+- Check WhatsApp connection (valid QR Code)
+- Check `OPENAI_API_KEY` configured
+- Check error logs in console
 
-## 📚 Documentação
+## 📚 Documentation
 
 - [Baileys](https://github.com/WhiskeySockets/Baileys) - WhatsApp Web API
-- [NestJS](https://docs.nestjs.com) - Framework Node.js
-- [LangChain](https://js.langchain.com) - Framework de Agentes IA
-- [OpenAI](https://platform.openai.com/docs) - API GPT e Whisper
-- [LangGraph](https://langchain-ai.github.io/langgraphjs/) - Orquestração de Agentes
+- [NestJS](https://docs.nestjs.com) - Node.js Framework
+- [LangChain](https://js.langchain.com) - AI Agents Framework
+- [OpenAI](https://platform.openai.com/docs) - GPT and Whisper API
+- [LangGraph](https://langchain-ai.github.io/langgraphjs/) - Agent Orchestration
 
-## 👨‍💻 Desenvolvido por
+## 👨‍💻 Developed by
 
-Voice Check 
-## 📄 Licença
+Voice Check Team
+
+## 📄 License
 
 MIT
-
