@@ -12,7 +12,6 @@ import * as qrcode from 'qrcode-terminal';
 import { SessionService } from '../session/session.service';
 import { ConversationAgent } from '../langgraph/agents/conversation.agent';
 import { ResultAnalysisAgent } from '../langgraph/agents/result-analysis.agent';
-import { ImageGeneratorService } from './image-generator.service';
 import { VoiceAnalysisResult } from '../langgraph/types/agent.types';
 
 interface ConversationMessage {
@@ -35,7 +34,6 @@ export class WhatsappService implements OnModuleDestroy {
     private readonly sessionService: SessionService,
     private readonly conversationAgent: ConversationAgent,
     private readonly resultAnalysisAgent: ResultAnalysisAgent,
-    private readonly imageGenerator: ImageGeneratorService,
   ) {
     this.frontendUrl =
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
@@ -72,6 +70,27 @@ export class WhatsappService implements OnModuleDestroy {
 
   private async delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private formatResultMessage(result: VoiceAnalysisResult): string {
+    const { riskAssessment } = result;
+    
+    // Escolher emoji baseado no risco
+    let emoji = '🟢';
+    if (riskAssessment.color === 'red') emoji = '🔴';
+    else if (riskAssessment.color === 'yellow' || riskAssessment.color === 'orange') emoji = '🟡';
+
+    return `
+✅ *Resultado da sua análise chegou!*
+
+${emoji} *${riskAssessment.riskLevel.toUpperCase()}*
+
+${riskAssessment.recommendation}
+
+━━━━━━━━━━━━━━━━━━━
+
+⚠️ _Lembre-se: este é apenas um rastreamento inicial. Para um diagnóstico completo, consulte um médico otorrinolaringologista._
+`.trim();
   }
 
   async start(): Promise<void> {
@@ -225,20 +244,30 @@ export class WhatsappService implements OnModuleDestroy {
       await this.socket?.sendMessage(whatsappId, { text: processingMsg });
       this.addToHistory(whatsappId, 'assistant', processingMsg);
 
-      this.logger.log('Aguardando 5 segundos antes de enviar resultado...');
+      this.logger.log('Aguardando antes de enviar resultado...');
       await this.delay(2000);
 
       await this.simulateTyping(whatsappId, 3000);
 
-      this.logger.log('Gerando imagem do resultado...');
-      const imageBuffer = await this.imageGenerator.generateResultImage(result);
+      // Usar o agente de análise de resultado para gerar mensagem personalizada com LLM
+      this.logger.log('Gerando explicação personalizada com LLM...');
+      
+      try {
+        const resultMessage = await this.resultAnalysisAgent.explainResult(result, {
+          userId: whatsappId,
+          conversationHistory: this.getHistory(whatsappId),
+        });
 
-      await this.socket?.sendMessage(whatsappId, {
-        image: imageBuffer,
-        caption: '*Seu Resultado da Análise de Voz*',
-      });
-
-      this.logger.log(`Imagem do resultado enviada para ${whatsappId}`);
+        await this.socket?.sendMessage(whatsappId, { text: resultMessage });
+        this.addToHistory(whatsappId, 'assistant', resultMessage);
+        this.logger.log(`Resultado enviado para ${whatsappId}`);
+      } catch (error) {
+        // Fallback se a LLM falhar
+        this.logger.error('Erro na LLM, usando fallback:', error);
+        const fallbackMsg = this.formatResultMessage(result);
+        await this.socket?.sendMessage(whatsappId, { text: fallbackMsg });
+        this.addToHistory(whatsappId, 'assistant', fallbackMsg);
+      }
 
       this.sessionService.deleteSession(sessionId);
     } catch (error) {
