@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { createCanvas, registerFont } from 'canvas';
 import { VoiceAnalysisResult } from '../langgraph/types/agent.types';
-import * as fs from 'fs';
-import * as path from 'path';
+import sharp from 'sharp';
 
 @Injectable()
 export class ImageGeneratorService {
@@ -10,57 +8,90 @@ export class ImageGeneratorService {
 
   async generateResultImage(result: VoiceAnalysisResult): Promise<Buffer> {
     const risk = result.riskAssessment;
-    
     const colors = this.getColorScheme(risk.color);
+    const emoji = this.getRiskEmoji(risk.color);
     
     const width = 800;
     const height = 600;
-    const canvas = createCanvas(width, height);
-    const ctx = canvas.getContext('2d');
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, colors.bgStart);
-    gradient.addColorStop(1, colors.bgEnd);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+    // Criar SVG com o resultado
+    const svg = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background com gradiente -->
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:${colors.bgStart};stop-opacity:1" />
+            <stop offset="100%" style="stop-color:${colors.bgEnd};stop-opacity:1" />
+          </linearGradient>
+          
+          <!-- Shadow para o card -->
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+            <feOffset dx="0" dy="10" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.2"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        <!-- Background -->
+        <rect width="${width}" height="${height}" fill="url(#grad)"/>
+        
+        <!-- Card branco com sombra -->
+        <rect x="40" y="40" width="720" height="520" rx="20" fill="white" filter="url(#shadow)"/>
+        
+        <!-- Título -->
+        <text x="400" y="120" font-family="Arial, sans-serif" font-size="42" font-weight="bold" 
+              fill="${colors.primary}" text-anchor="middle">
+          🎤 Resultado da Análise
+        </text>
+        
+        <!-- Emoji do risco -->
+        <text x="400" y="240" font-size="80" text-anchor="middle">
+          ${emoji}
+        </text>
+        
+        <!-- Nível de risco -->
+        <text x="400" y="320" font-family="Arial, sans-serif" font-size="56" font-weight="bold" 
+              fill="${colors.primary}" text-anchor="middle">
+          ${risk.riskLevel.toUpperCase()}
+        </text>
+        
+        <!-- Score -->
+        <text x="400" y="380" font-family="Arial, sans-serif" font-size="28" 
+              fill="#666666" text-anchor="middle">
+          Score: ${risk.riskScore}/100
+        </text>
+        
+        <!-- Subtítulo -->
+        <text x="400" y="470" font-family="Arial, sans-serif" font-size="18" 
+              fill="#999999" text-anchor="middle">
+          Análise de Voz para Detecção de Câncer de Laringe
+        </text>
+        
+        <!-- Disclaimer -->
+        <text x="400" y="510" font-family="Arial, sans-serif" font-size="16" font-style="italic"
+              fill="#999999" text-anchor="middle">
+          Este é um rastreamento inicial. Consulte um especialista.
+        </text>
+      </svg>
+    `;
 
-    const cardPadding = 40;
-    const cardX = cardPadding;
-    const cardY = cardPadding;
-    const cardWidth = width - cardPadding * 2;
-    const cardHeight = height - cardPadding * 2;
-    
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-    ctx.shadowBlur = 20;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 10;
-    
-    ctx.fillStyle = '#FFFFFF';
-    this.roundRect(ctx, cardX, cardY, cardWidth, cardHeight, 20);
-    ctx.fill();
-    
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-
-    ctx.fillStyle = colors.primary;
-    ctx.font = 'bold 48px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Resultado da Análise', width / 2, 140);
-
-    ctx.font = 'bold 64px sans-serif';
-    ctx.fillStyle = colors.primary;
-    ctx.fillText(risk.riskLevel.toUpperCase(), width / 2, 320);
-
-    ctx.fillStyle = '#999999';
-    ctx.font = '20px sans-serif';
-    ctx.fillText('Análise de Voz para Detecção de Câncer de Laringe', width / 2, 470);
-    
-    ctx.font = 'italic 18px sans-serif';
-    ctx.fillText('Este é um rastreamento inicial. Consulte um especialista.', width / 2, 510);
-
-    return canvas.toBuffer('image/png');
+    // Converter SVG para PNG usando Sharp
+    try {
+      const pngBuffer = await sharp(Buffer.from(svg))
+        .png()
+        .toBuffer();
+      
+      return pngBuffer;
+    } catch (error) {
+      this.logger.error('Erro ao gerar imagem:', error);
+      throw error;
+    }
   }
 
   private getColorScheme(color: string): {
@@ -103,27 +134,6 @@ export class ImageGeneratorService {
       default:
         return '🟢';
     }
-  }
-
-  private roundRect(
-    ctx: any,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    radius: number,
-  ): void {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
   }
 }
 
