@@ -274,7 +274,7 @@ ${riskAssessment.recommendation}
     } catch (error) {
       this.logger.error('❌ Erro ao processar áudio:', error);
       await this.socket?.sendMessage(sender, {
-        text: 'Desculpe, ainda não tenho essa funcionalidade. Pode tentar enviar uma mensagem de texto?',
+        text: 'Desculpe, ocorreu um erro ao processar seu áudio. Pode tentar novamente?',
       });
     }
   }
