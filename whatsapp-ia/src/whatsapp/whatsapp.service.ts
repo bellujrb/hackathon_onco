@@ -5,6 +5,7 @@ import makeWASocket, {
   useMultiFileAuthState,
   fetchLatestBaileysVersion,
   WASocket,
+  downloadMediaMessage,
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
 import * as qrcode from 'qrcode-terminal';
@@ -12,6 +13,7 @@ import * as qrcode from 'qrcode-terminal';
 import { SessionService } from '../session/session.service';
 import { ConversationAgent } from '../langgraph/agents/conversation.agent';
 import { ResultAnalysisAgent } from '../langgraph/agents/result-analysis.agent';
+import { AudioTranscriptionService } from './audio-transcription.service';
 import { VoiceAnalysisResult } from '../langgraph/types/agent.types';
 
 interface ConversationMessage {
@@ -34,6 +36,7 @@ export class WhatsappService implements OnModuleDestroy {
     private readonly sessionService: SessionService,
     private readonly conversationAgent: ConversationAgent,
     private readonly resultAnalysisAgent: ResultAnalysisAgent,
+    private readonly audioTranscriptionService: AudioTranscriptionService,
   ) {
     this.frontendUrl =
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
@@ -157,6 +160,17 @@ ${riskAssessment.recommendation}
     if (!message || message.key.fromMe) return;
 
     const sender = message.key.remoteJid;
+    
+    // Detectar tipo de mensagem
+    const messageType = Object.keys(message.message || {})[0];
+    
+    // Processar áudio
+    if (messageType === 'audioMessage') {
+      await this.handleAudioMessage(message, sender);
+      return;
+    }
+    
+    // Processar texto
     const textBody =
       message.message?.conversation ||
       message.message?.extendedTextMessage?.text ||
@@ -199,6 +213,68 @@ ${riskAssessment.recommendation}
       this.logger.error('Erro ao processar mensagem:', error);
       await this.socket?.sendMessage(sender, {
         text: 'Desculpe, tive um problema técnico. Pode tentar novamente?',
+      });
+    }
+  }
+
+  private async handleAudioMessage(message: any, sender: string) {
+    try {
+      this.logger.log(`🎤 Áudio recebido de ${sender}`);
+
+      // Baixar o áudio
+      const buffer = await downloadMediaMessage(
+        message,
+        'buffer',
+        {},
+        {
+          logger: pino({ level: 'error' }),
+          reuploadRequest: this.socket!.updateMediaMessage,
+        },
+      );
+
+      this.logger.log(`📥 Áudio baixado: ${buffer.length} bytes`);
+
+      // Transcrever o áudio
+      const transcription = await this.audioTranscriptionService.transcribe(
+        buffer as Buffer,
+        'ogg',
+      );
+
+      this.logger.log(`📝 Transcrição: "${transcription}"`);
+
+      // Processar a transcrição como texto normal
+      this.addToHistory(sender, 'user', transcription);
+
+      const history = this.getHistory(sender);
+      
+      const intent = await this.conversationAgent.detectIntent(transcription, {
+        userId: sender,
+        conversationHistory: history,
+      });
+
+      if (intent === 'send_test_link') {
+        await this.handleTestRequest(sender);
+      } else {
+        await this.simulateTyping(sender, 2000);
+        
+        const response = await this.conversationAgent.process(transcription, {
+          userId: sender,
+          conversationHistory: history,
+        });
+        
+        if (response.success) {
+          await this.socket?.sendMessage(sender, { text: response.content });
+          this.addToHistory(sender, 'assistant', response.content);
+          
+          this.logger.log(`Resposta enviada para ${sender}`);
+        } else {
+          throw new Error(response.error);
+        }
+      }
+    } catch (error) {
+      this.logger.error('❌ Erro ao processar áudio:', error);
+      await this.socket?.sendMessage(sender, {
+        text: 'Desculpe, não consegui processar seu áudio. Pode tentar enviar uma mensagem de texto ou gravar novamente?',
       });
     }
   }
