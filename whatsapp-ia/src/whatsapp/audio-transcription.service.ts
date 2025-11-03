@@ -2,8 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { createReadStream } from 'fs';
-import { writeFile, unlink } from 'fs/promises';
+import { writeFile, unlink, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { existsSync } from 'fs';
 
 @Injectable()
 export class AudioTranscriptionService {
@@ -35,8 +36,13 @@ export class AudioTranscriptionService {
       throw new Error('OPENAI_API_KEY não configurada');
     }
 
-    // Criar arquivo temporário
+    // Criar diretório temporário se não existir
     const tempDir = join(process.cwd(), 'temp');
+    if (!existsSync(tempDir)) {
+      await mkdir(tempDir, { recursive: true });
+      this.logger.log(`📁 Diretório temp criado: ${tempDir}`);
+    }
+
     const tempFileName = `audio-${Date.now()}.${format}`;
     const tempFilePath = join(tempDir, tempFileName);
 
