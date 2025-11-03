@@ -48,31 +48,30 @@ export class ResultAnalysisAgent extends BaseAgent {
     const risk = result.riskAssessment;
 
     const prompt = `
-Você é um médico enviando resultado de triagem de voz para câncer de laringe.
+Você é um médico enviando resultado de exame de voz para câncer de laringe.
 
-RISCO: ${risk.riskLevel}
+RISCO DETECTADO: ${risk.riskLevel}
 
-REGRAS ESTRITAS:
-❌ NÃO cumprimente
-❌ NÃO use termos técnicos
-❌ NÃO contradiga o nível de risco (se é baixo, NÃO fale de sinais identificados!)
-❌ Máximo 5 linhas
+REGRAS:
+• NÃO cumprimente (sem Oi, Olá, etc)
+• Use o formato: 🟢/🟡/🔴 *Frase com negrito sobre o risco.* Orientação. Lembre-se: este é apenas um rastreamento inicial.
+• Máximo 3 linhas
 
 ${risk.riskLevel.toLowerCase().includes('baixo') ? `
-✅ Baixo risco = "não identificou sinais de preocupação"
-✅ Oriente: continue cuidando da voz
+BAIXO RISCO:
+Diga que está em *baixo risco* e não foram encontrados sinais preocupantes.
+Oriente: continuar cuidando da voz e fazer acompanhamentos regulares.
 ` : risk.riskLevel.toLowerCase().includes('alto') ? `
-✅ Alto risco = "sinais que precisam de atenção"
-✅ Oriente: procure otorrino urgente
+ALTO RISCO:
+Diga que está em *alto risco* e foram identificados sinais que precisam atenção.
+Oriente: procurar um otorrinolaringologista com urgência.
 ` : `
-✅ Médio risco = "alguns aspectos precisam de avaliação"  
-✅ Oriente: marque consulta com otorrino
+MÉDIO RISCO:
+Diga que está em *médio risco* e alguns aspectos precisam avaliação.
+Oriente: agendar consulta com otorrinolaringologista.
 `}
 
-Formato:
-[emoji] [resultado em 2 frases]. [orientação em 2 frases].
-
-_Lembre-se: este é apenas um rastreamento inicial._
+Escreva a mensagem agora:
     `;
 
     const response = await this.process(prompt, context);
