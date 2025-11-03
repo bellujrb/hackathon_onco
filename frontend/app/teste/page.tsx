@@ -126,7 +126,7 @@ function TestePageContent() {
       setTimeout(() => {
         const whatsappNumber = '5513936181426'
         const message = 'Resultado'
-        const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+        const url = `https://wa.me/${whatsappNumber}`
         window.location.href = url
       }, 2000)
     } catch (err: any) {
