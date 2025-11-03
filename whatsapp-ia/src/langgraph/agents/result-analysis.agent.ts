@@ -48,26 +48,25 @@ export class ResultAnalysisAgent extends BaseAgent {
     const risk = result.riskAssessment;
 
     const prompt = `
-        Você recebeu o resultado de uma análise de voz para rastreamento de câncer de laringe.
+Você é um médico enviando o resultado de um exame de voz para rastreamento de câncer de laringe.
 
-        Informações sobre o resultado:
-        - Nível de risco identificado: ${risk.riskLevel}
-        - Pontuação de risco: ${risk.riskScore}/100
-        ${risk.riskFactors.length > 0 ? `- Foram identificados alguns sinais: ${risk.riskFactors.join(', ')}` : '- Nenhum fator de risco identificado'}
-        - Recomendação: ${risk.recommendation}
+RESULTADO:
+- Risco: ${risk.riskLevel}
+${risk.riskFactors.length > 0 ? `- Sinais: ${risk.riskFactors.join(', ')}` : ''}
 
-        IMPORTANTE:
-        • Seja DIRETO e ACOLHEDOR, como um profissional de saúde conversando pessoalmente
-        • NÃO cumprimente (sem "Olá", "Oi", etc) - vá direto ao resultado
-        • NÃO liste dados técnicos (HNR, F0, Jitter, Shimmer, etc)
-        • NÃO mencione pontuações numéricas
-        • Foque no que a pessoa precisa SABER e FAZER
-        • Use linguagem simples e empática
-        • Reforce que é um rastreio inicial, não um diagnóstico
-        • Seja tranquilizador mas honesto
-        • Use markdown do WhatsApp: *negrito*, _itálico_
+REGRAS ABSOLUTAS:
+❌ NÃO cumprimente (sem "Oi", "Olá", "Bom dia", etc)
+❌ NÃO use dados técnicos (HNR, F0, Jitter, Shimmer, parâmetros, normalidade, etc)
+❌ NÃO mencione números ou pontuações
+❌ Máximo 3 linhas de texto
 
-        Explique o resultado de forma humana, natural e DIRETA:
+✅ Vá DIRETO ao ponto: qual o risco e o que fazer
+✅ Seja breve, claro e humano
+✅ Use emoji no início: 🟢 baixo risco, 🟡 médio risco, 🔴 alto risco
+✅ Use *negrito* para ênfase
+✅ Termine sempre com: "_Lembre-se: este é apenas um rastreamento inicial._"
+
+Escreva uma mensagem CURTA e DIRETA (máximo 3 linhas):
     `;
 
     const response = await this.process(prompt, context);
@@ -81,43 +80,15 @@ export class ResultAnalysisAgent extends BaseAgent {
 
   private buildSimpleExplanation(result: VoiceAnalysisResult): string {
     const risk = result.riskAssessment;
-
     const emoji = risk.color === 'red' ? '🔴' : risk.color === 'orange' ? '🟡' : '🟢';
 
-    let explanation = [
-      `${emoji} *Resultado da sua análise de voz*`,
-      '',
-    ];
-
     if (risk.riskLevel.toLowerCase().includes('alto')) {
-      explanation.push(
-        'Olha, sua análise mostrou alguns sinais que merecem atenção. Não é motivo pra pânico, mas é importante você procurar um otorrinolaringologista o quanto antes, ok?',
-      );
+      return `${emoji} Sua análise mostrou *sinais que merecem atenção*. Procure um otorrino o quanto antes.\n\n_Lembre-se: este é apenas um rastreamento inicial._`;
     } else if (risk.riskLevel.toLowerCase().includes('moderado') || risk.riskLevel.toLowerCase().includes('médio')) {
-      explanation.push(
-        'Sua análise mostrou alguns aspectos que precisam de atenção. Recomendo que você marque uma consulta com um otorrino pra uma avaliação mais completa.',
-      );
+      return `${emoji} Sua análise mostrou alguns aspectos que precisam de atenção. Marque uma consulta com um otorrino.\n\n_Lembre-se: este é apenas um rastreamento inicial._`;
     } else {
-      explanation.push(
-        'Que bom! Sua análise não identificou sinais de preocupação. Mas lembre-se: isso é só um rastreio inicial.',
-      );
+      return `${emoji} Sua análise não identificou sinais de preocupação. Continue cuidando da sua saúde vocal!\n\n_Lembre-se: este é apenas um rastreamento inicial._`;
     }
-
-    if (risk.riskFactors.length > 0) {
-      explanation.push('', 'O que chamou atenção:');
-      risk.riskFactors.forEach((factor) => {
-        explanation.push(`• ${factor}`);
-      });
-    }
-
-    explanation.push('', `💡 ${risk.recommendation}`);
-
-    explanation.push(
-      '',
-      '_Lembre-se: Este é um rastreamento inicial, não um diagnóstico. Apenas um médico especialista pode fazer uma avaliação completa._',
-    );
-
-    return explanation.join('\n');
   }
 }
 

@@ -240,7 +240,7 @@ ${riskAssessment.recommendation}
 
       await this.simulateTyping(whatsappId, 1500);
 
-      const processingMsg = await this.conversationAgent.generateProcessingMessage();
+      const processingMsg = 'Recebi seu teste! Analisando... 🔍';
       await this.socket?.sendMessage(whatsappId, { text: processingMsg });
       this.addToHistory(whatsappId, 'assistant', processingMsg);
 
