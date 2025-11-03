@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import axios from 'axios'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-export default function TestePage() {
+function TestePageContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session')
 
@@ -14,6 +14,7 @@ export default function TestePage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [completed, setCompleted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking')
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -22,7 +23,20 @@ export default function TestePage() {
     if (!sessionId) {
       setError('Sessão inválida! Por favor, use o link enviado pelo WhatsApp.')
     }
+    checkApiStatus()
   }, [sessionId])
+
+  const checkApiStatus = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/health`, { timeout: 5000 })
+      console.log('✅ API Status:', response.data)
+      setApiStatus('online')
+    } catch (err) {
+      console.error('❌ API não está acessível:', err)
+      setApiStatus('offline')
+      setError('Servidor de análise está offline. Por favor, tente novamente mais tarde.')
+    }
+  }
 
   const startRecording = async () => {
     try {
@@ -63,6 +77,14 @@ export default function TestePage() {
       return
     }
 
+    console.log('📤 Iniciando upload do áudio...')
+    console.log('Session ID:', sessionId)
+    console.log('Audio Blob:', {
+      size: audioBlob.size,
+      type: audioBlob.type
+    })
+    console.log('API URL:', `${API_URL}/api/analyze/${sessionId}`)
+
     setIsAnalyzing(true)
     setError(null)
 
@@ -70,21 +92,36 @@ export default function TestePage() {
     formData.append('audio', audioBlob, 'recording.webm')
 
     try {
-      await axios.post(
+      console.log('⏳ Enviando requisição...')
+      const response = await axios.post(
         `${API_URL}/api/analyze/${sessionId}`,
         formData,
         {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+          timeout: 60000, // 60 segundos de timeout
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
+            console.log(`📊 Upload: ${percentCompleted}%`)
+          }
         }
       )
+      
+      console.log('✅ Análise enviada com sucesso:', response.data)
 
       // Análise completa! Backend enviará resultado automaticamente
       setCompleted(true)
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Erro ao processar áudio. Tente novamente.')
-      console.error(err)
+      console.error('❌ Erro completo:', err)
+      console.error('Response:', err.response)
+      
+      let errorMessage = 'Erro ao processar áudio. Tente novamente.'
+      
+      if (err.response?.data?.detail) {
+        errorMessage = err.response.data.detail
+      } else if (err.message) {
+        errorMessage = `Erro: ${err.message}`
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsAnalyzing(false)
     }
@@ -115,6 +152,20 @@ export default function TestePage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">🎤 Teste de Voz</h1>
           <p className="text-gray-600">Rastreamento de Câncer de Laringe</p>
+          
+          {/* API Status Indicator */}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${
+              apiStatus === 'online' ? 'bg-green-500 animate-pulse' : 
+              apiStatus === 'offline' ? 'bg-red-500' : 
+              'bg-yellow-500 animate-pulse'
+            }`}></div>
+            <span className="text-xs text-gray-500">
+              {apiStatus === 'online' ? 'Servidor Online' : 
+               apiStatus === 'offline' ? 'Servidor Offline' : 
+               'Verificando servidor...'}
+            </span>
+          </div>
         </div>
 
         {!completed && (
@@ -132,16 +183,19 @@ export default function TestePage() {
 
             <button
               onClick={isRecording ? stopRecording : startRecording}
-              disabled={isAnalyzing}
+              disabled={isAnalyzing || apiStatus === 'offline'}
               className={`w-full py-4 rounded-full font-semibold text-lg transition-all ${
                 isRecording
                   ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse'
-                  : isAnalyzing
+                  : isAnalyzing || apiStatus === 'offline'
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-primary-500 hover:bg-primary-600 text-white hover:shadow-lg'
               }`}
             >
-              {isRecording ? '⏹️ Parar Gravação' : isAnalyzing ? '⏳ Processando...' : '🎤 Iniciar Gravação'}
+              {isRecording ? '⏹️ Parar Gravação' : 
+               isAnalyzing ? '⏳ Processando...' : 
+               apiStatus === 'offline' ? '❌ Servidor Offline' :
+               '🎤 Iniciar Gravação'}
             </button>
 
             {isRecording && (
@@ -197,5 +251,20 @@ export default function TestePage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function TestePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+          <p className="mt-4 text-gray-600">Carregando...</p>
+        </div>
+      </main>
+    }>
+      <TestePageContent />
+    </Suspense>
   )
 }
