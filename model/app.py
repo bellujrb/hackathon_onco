@@ -24,11 +24,11 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# CORS
+# CORS - Permitir todas as origens sem credentials
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # Mudado para False para funcionar com allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
