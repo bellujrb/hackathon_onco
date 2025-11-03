@@ -42,3 +42,6 @@ lerna-debug.log*
 # WhatsApp authentication
 /auth
 
+# Temporary audio files
+/temp
+
