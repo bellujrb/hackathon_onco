@@ -211,7 +211,7 @@ ${riskAssessment.recommendation}
 
       const testLink = `${this.frontendUrl}/teste?session=${sessionId}`;
 
-      const message = await this.conversationAgent.generateTestLinkMessage(testLink);
+      const message = `Pronto! 🎤\n\n*Link do teste:* ${testLink}\n\nClique, grave o som "aaah" por 3-5 segundos, e o resultado volta aqui!`;
 
       await this.socket?.sendMessage(sender, { text: message });
       this.addToHistory(sender, 'assistant', message);
