@@ -48,25 +48,31 @@ export class ResultAnalysisAgent extends BaseAgent {
     const risk = result.riskAssessment;
 
     const prompt = `
-Você é um médico enviando o resultado de um exame de voz para rastreamento de câncer de laringe.
+Você é um médico enviando resultado de triagem de voz para câncer de laringe.
 
-RESULTADO:
-- Risco: ${risk.riskLevel}
-${risk.riskFactors.length > 0 ? `- Sinais: ${risk.riskFactors.join(', ')}` : ''}
+RISCO: ${risk.riskLevel}
 
-REGRAS ABSOLUTAS:
-❌ NÃO cumprimente (sem "Oi", "Olá", "Bom dia", etc)
-❌ NÃO use dados técnicos (HNR, F0, Jitter, Shimmer, parâmetros, normalidade, etc)
-❌ NÃO mencione números ou pontuações
-❌ Máximo 3 linhas de texto
+REGRAS ESTRITAS:
+❌ NÃO cumprimente
+❌ NÃO use termos técnicos
+❌ NÃO contradiga o nível de risco (se é baixo, NÃO fale de sinais identificados!)
+❌ Máximo 5 linhas
 
-✅ Vá DIRETO ao ponto: qual o risco e o que fazer
-✅ Seja breve, claro e humano
-✅ Use emoji no início: 🟢 baixo risco, 🟡 médio risco, 🔴 alto risco
-✅ Use *negrito* para ênfase
-✅ Termine sempre com: "_Lembre-se: este é apenas um rastreamento inicial._"
+${risk.riskLevel.toLowerCase().includes('baixo') ? `
+✅ Baixo risco = "não identificou sinais de preocupação"
+✅ Oriente: continue cuidando da voz
+` : risk.riskLevel.toLowerCase().includes('alto') ? `
+✅ Alto risco = "sinais que precisam de atenção"
+✅ Oriente: procure otorrino urgente
+` : `
+✅ Médio risco = "alguns aspectos precisam de avaliação"  
+✅ Oriente: marque consulta com otorrino
+`}
 
-Escreva uma mensagem CURTA e DIRETA (máximo 3 linhas):
+Formato:
+[emoji] [resultado em 2 frases]. [orientação em 2 frases].
+
+_Lembre-se: este é apenas um rastreamento inicial._
     `;
 
     const response = await this.process(prompt, context);
