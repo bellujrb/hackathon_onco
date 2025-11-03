@@ -125,7 +125,6 @@ function TestePageContent() {
       // Redirecionar para WhatsApp após 2 segundos
       setTimeout(() => {
         const whatsappNumber = '5513936181426'
-        const message = 'Resultado'
         const url = `https://wa.me/${whatsappNumber}`
         window.location.href = url
       }, 2000)
