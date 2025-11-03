@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VoiceAnalysisResult } from '../langgraph/types/agent.types';
-import sharp from 'sharp';
+const sharp = require('sharp');
 
 @Injectable()
 export class ImageGeneratorService {
